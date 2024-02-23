@@ -3,6 +3,7 @@ package com.chscorp.cosmeticsstore
 import android.app.Application
 import com.chscorp.cosmeticsstore.di.DataModule
 import com.chscorp.cosmeticsstore.di.RepositoryModule
+import com.chscorp.cosmeticsstore.di.ViewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -14,5 +15,6 @@ class MainApplication: Application() {
         }
         DataModule.loadDataModule()
         RepositoryModule.loadRepositoryModules()
+        ViewModelModule.loadViewModelModule()
     }
 }
