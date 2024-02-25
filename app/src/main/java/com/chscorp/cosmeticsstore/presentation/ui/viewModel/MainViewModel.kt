@@ -9,23 +9,31 @@ import androidx.lifecycle.viewModelScope
 import com.chscorp.cosmeticsstore.domain.repository.ProductsRepository
 import com.chscorp.cosmeticsstore.domain.util.Resource
 import com.chscorp.cosmeticsstore.presentation.ui.ProductState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(val repository: ProductsRepository) : ViewModel() {
 
-    var state by mutableStateOf(ProductState())
-        private set
+    private val _uiState: MutableStateFlow<ProductState> = MutableStateFlow(
+        ProductState()
+    )
 
-    fun loadProductInfo() {
+    val uiState get() = _uiState.asStateFlow()
+
+    init {
+        loadProductInfo()
+    }
+    private fun loadProductInfo() {
         viewModelScope.launch {
-            state = state.copy(
+            _uiState.value = _uiState.value.copy(
                 isLoading = true,
                 error = null
             )
 
             when (val result = repository.getProductData()) {
                 is Resource.Success -> {
-                    state = state.copy(
+                    _uiState.value = _uiState.value.copy(
                         productList = result.data,
                         isLoading = false,
                         error = null
@@ -34,7 +42,7 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
                 }
 
                 is Resource.Error -> {
-                    state = state.copy(
+                    _uiState.value = _uiState.value.copy(
                         productList = null,
                         isLoading = false,
                         error = result.message
