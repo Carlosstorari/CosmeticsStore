@@ -14,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.chscorp.cosmeticsstore.presentation.components.HomeListProductScreenStateful
+import com.chscorp.cosmeticsstore.presentation.components.LoginScreenStateful
 import com.chscorp.cosmeticsstore.presentation.ui.theme.CosmeticsStoreTheme
+import com.chscorp.cosmeticsstore.presentation.ui.viewModel.LoginViewModel
 import com.chscorp.cosmeticsstore.presentation.ui.viewModel.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -27,8 +29,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val viewModel = koinViewModel<MainViewModel>()
-                    HomeListProductScreenStateful(viewModel = viewModel)
+                    //val viewModel = koinViewModel<MainViewModel>()
+                    //HomeListProductScreenStateful(viewModel = viewModel)
+
+                    val viewModel = koinViewModel<LoginViewModel>()
+                    LoginScreenStateful(viewModel = viewModel)
                 }
             }
         }

@@ -30,7 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.chscorp.cosmeticsstore.presentation.ui.ProductState
+import com.chscorp.cosmeticsstore.presentation.states.ProductState
 import com.chscorp.cosmeticsstore.presentation.ui.theme.DarkCoral
 import com.chscorp.cosmeticsstore.presentation.ui.theme.DeepPeach
 import com.chscorp.cosmeticsstore.presentation.ui.theme.OldBurgundy

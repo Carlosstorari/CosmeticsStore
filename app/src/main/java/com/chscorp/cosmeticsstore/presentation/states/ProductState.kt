@@ -1,4 +1,4 @@
-package com.chscorp.cosmeticsstore.presentation.ui
+package com.chscorp.cosmeticsstore.presentation.states
 
 import com.chscorp.cosmeticsstore.domain.product.ProductListItem
 

@@ -11,6 +11,7 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val DeepPeach = Color(0xFFFFC0A6)
+val DeepPeachSoft = Color(0xFFC7876D)
 val LotionWhite = Color(0xFFFCFCFB)
 val QuickSilver = Color(0xFFA3A5A2)
 val WengeGray = Color(0xFF5E5C58)

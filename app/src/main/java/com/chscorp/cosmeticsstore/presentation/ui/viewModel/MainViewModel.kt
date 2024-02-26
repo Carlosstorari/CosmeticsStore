@@ -1,14 +1,11 @@
 package com.chscorp.cosmeticsstore.presentation.ui.viewModel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chscorp.cosmeticsstore.domain.repository.ProductsRepository
 import com.chscorp.cosmeticsstore.domain.util.Resource
-import com.chscorp.cosmeticsstore.presentation.ui.ProductState
+import com.chscorp.cosmeticsstore.presentation.states.ProductState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

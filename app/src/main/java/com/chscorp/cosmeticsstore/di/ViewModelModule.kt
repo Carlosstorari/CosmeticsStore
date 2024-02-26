@@ -1,5 +1,6 @@
 package com.chscorp.cosmeticsstore.di
 
+import com.chscorp.cosmeticsstore.presentation.ui.viewModel.LoginViewModel
 import com.chscorp.cosmeticsstore.presentation.ui.viewModel.MainViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
@@ -12,5 +13,6 @@ object ViewModelModule {
 
     private val viewModelModule = module {
         viewModel { MainViewModel(get()) }
+        viewModel { LoginViewModel() }
     }
 }
