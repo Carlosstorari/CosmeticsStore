@@ -5,5 +5,5 @@ data class ProductListItem(
     val brand: String?,
     val price: String?,
     val description: String?,
-    val isFavorite: Boolean = false
+    var isFavorite: Boolean = false
 )

@@ -1,6 +1,7 @@
 package com.chscorp.cosmeticsstore.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,15 +9,25 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -60,7 +71,13 @@ fun CardProductItem(
                     Modifier
                         .weight(1f)
                         .fillMaxHeight())
-                Icon(Icons.Default.FavoriteBorder, contentDescription = null)
+                FavoriteButton(
+                    //modifier = Modifier.selectable(),
+                    productIsFavorite = product.isFavorite,
+                    onFavoriteClicked = {
+                        product.isFavorite = it
+                    }
+                )
             }
             Row {
                 Text(text = "Preço: ", fontWeight = FontWeight.Bold)
@@ -83,6 +100,40 @@ fun CardProductItem(
             }
         }
     }
+}
+
+@Composable
+fun FavoriteButton(
+    modifier: Modifier = Modifier,
+    color: Color = Color(0xffE91E63),
+    productIsFavorite: Boolean,
+    onFavoriteClicked: (favorite: Boolean) -> Unit
+) {
+
+    var isFavorite by rememberSaveable { mutableStateOf(productIsFavorite) }
+
+    IconToggleButton(
+        checked = isFavorite,
+        onCheckedChange = {
+            isFavorite = !isFavorite
+            onFavoriteClicked(isFavorite)
+        }
+    ) {
+        Icon(
+            tint = color,
+            modifier = modifier.graphicsLayer {
+                scaleX = 1.3f
+                scaleY = 1.3f
+            },
+            imageVector = if (isFavorite) {
+                Icons.Filled.Favorite
+            } else {
+                Icons.Default.FavoriteBorder
+            },
+            contentDescription = null
+        )
+    }
+
 }
 
 @Preview
