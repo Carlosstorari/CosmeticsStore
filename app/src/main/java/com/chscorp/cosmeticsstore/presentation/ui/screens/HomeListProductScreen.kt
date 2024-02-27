@@ -1,4 +1,4 @@
-package com.chscorp.cosmeticsstore.presentation.components
+package com.chscorp.cosmeticsstore.presentation.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,14 +23,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.chscorp.cosmeticsstore.presentation.ui.ProductState
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.alphabetica
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.biggestPrice
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.invertedAlphabetica
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.lowestPrice
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.options
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.titleFilter
+import com.chscorp.cosmeticsstore.presentation.components.CardProductItem
+import com.chscorp.cosmeticsstore.presentation.state.FilterBarState
+import com.chscorp.cosmeticsstore.presentation.state.ProductState
 import com.chscorp.cosmeticsstore.presentation.ui.theme.DarkCoral
 import com.chscorp.cosmeticsstore.presentation.ui.theme.DeepPeach
 import com.chscorp.cosmeticsstore.presentation.ui.theme.OldBurgundy
@@ -41,31 +46,40 @@ fun HomeListProductScreenStateful(
     viewModel: MainViewModel
 ) {
     val state by viewModel.uiState.collectAsState()
-    HomeListProductScreenStateless(state = state)
+    HomeListProductScreenStateless(
+        state = state,
+        filterBarState =
+        FilterBarState(
+            onOptionSelected = { option -> viewModel.selectedFilterOption(option) },
+            orderByLowestPrice = {
+                viewModel.orderByLowestPrice()
+            },
+            orderByBiggestPrice = {
+                viewModel.orderByBiggestPrice()
+            },
+            orderByAlphabetica = {
+                viewModel.orderByAlphabetica()
+            },
+            orderByInvertedAlphabetica = {
+                viewModel.orderByInvertedAlphabetica()
+            }
+        ),
+        { id, favorite -> viewModel.updateItemToFavoteById(id, favorite) }
+    )
 }
 
 @Composable
 fun HomeListProductScreenStateless(
-    state: ProductState = ProductState()
+    state: ProductState = ProductState(),
+    filterBarState: FilterBarState,
+    onClickItem: (String, Boolean) -> Unit,
 ) {
+    var selectedOption = state.selectedOption
     val isLoading = state.isLoading
     if (!isLoading) {
         Column {
             var productList = state.productList
-            val options = listOf(
-                "Menor preço",
-                "Maior preço",
-                "A-Z",
-                "Z-A",
-                "Favoritos"
-            )
-            var selectedOption by remember {
-                mutableStateOf("")
-            }
-            val onSelectionChange = { text: String ->
-                selectedOption = text
-            }
-            Text(text = "Ordenar por")
+            Text(text = titleFilter)
             Spacer(modifier = Modifier)
             Row(
                 Modifier
@@ -89,7 +103,7 @@ fun HomeListProductScreenStateless(
                                     ),
                                 )
                                 .clickable {
-                                    onSelectionChange(text)
+                                    filterBarState.onOptionSelected(text)
                                 }
                                 .background(
                                     if (text == selectedOption) {
@@ -107,20 +121,20 @@ fun HomeListProductScreenStateless(
                 }
             }
             when (selectedOption) {
-                "Menor preço" -> {
-                    productList = productList?.sortedBy { it.price?.toFloat() }
+                lowestPrice -> {
+                    filterBarState.orderByLowestPrice()
                 }
 
-                "Maior preço" -> {
-                    productList = productList?.sortedByDescending { it.price?.toFloat() }
+                biggestPrice -> {
+                    filterBarState.orderByBiggestPrice()
                 }
 
-                "A-Z" -> {
-                    productList = productList?.sortedBy { it.brand }
+                alphabetica -> {
+                    filterBarState.orderByAlphabetica()
                 }
 
-                "Z-A" -> {
-                    productList = productList?.sortedByDescending { it.brand }
+                invertedAlphabetica -> {
+                    filterBarState.orderByInvertedAlphabetica()
                 }
 
                 else -> {}
@@ -133,7 +147,8 @@ fun HomeListProductScreenStateless(
                 if (productList != null) {
                     for (product in productList) {
                         item {
-                            CardProductItem(product)
+                            CardProductItem(product,
+                                onFavoriteClicked = { id, favorite -> onClickItem(id, favorite) })
                         }
                     }
                 }
