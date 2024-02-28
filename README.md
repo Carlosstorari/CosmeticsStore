@@ -10,10 +10,6 @@ Este projeto é uma aplicação Android desenvolvida usando Jetpack Compose como
 - **Room**: Biblioteca de persistência de dados que fornece uma camada de abstração sobre o SQLite para acesso a banco de dados local.
 - **Arquitetura MVI**: Modelo-Visualização-Intenção, um padrão arquitetural que facilita a separação de preocupações e gerencia melhor o estado da aplicação.
 
-## Estrutura do Projeto
-O projeto está estruturado de acordo com a arquitetura MVI, dividindo responsabilidades entre Model, View e Intent. Aqui está uma visão geral da estrutura de pacotes:
-
-
 ## Telas do Projeto
 
 ### Tela Principal
