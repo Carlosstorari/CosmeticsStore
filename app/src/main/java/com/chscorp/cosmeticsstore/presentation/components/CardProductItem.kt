@@ -37,9 +37,9 @@ import com.chscorp.cosmeticsstore.presentation.PresentationConst.descriptionLabe
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.descriptionUnavailable
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.priceLabel
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.priceUnavailable
-import com.chscorp.cosmeticsstore.presentation.ui.theme.CosmeticsStoreTheme
-import com.chscorp.cosmeticsstore.presentation.ui.theme.DeepPeach
-import com.chscorp.cosmeticsstore.presentation.ui.theme.WengeGray
+import com.chscorp.cosmeticsstore.presentation.theme.CosmeticsStoreTheme
+import com.chscorp.cosmeticsstore.presentation.theme.DeepPeach
+import com.chscorp.cosmeticsstore.presentation.theme.WengeGray
 
 @Composable
 fun CardProductItem(

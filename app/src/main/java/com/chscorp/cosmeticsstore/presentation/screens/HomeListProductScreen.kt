@@ -1,4 +1,4 @@
-package com.chscorp.cosmeticsstore.presentation.ui.screens
+package com.chscorp.cosmeticsstore.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,10 +38,10 @@ import com.chscorp.cosmeticsstore.presentation.PresentationConst.titleFilter
 import com.chscorp.cosmeticsstore.presentation.components.CardProductItem
 import com.chscorp.cosmeticsstore.presentation.state.FilterBarState
 import com.chscorp.cosmeticsstore.presentation.state.ProductState
-import com.chscorp.cosmeticsstore.presentation.ui.theme.DarkCoral
-import com.chscorp.cosmeticsstore.presentation.ui.theme.DeepPeach
-import com.chscorp.cosmeticsstore.presentation.ui.theme.OldBurgundy
-import com.chscorp.cosmeticsstore.presentation.ui.viewModel.MainViewModel
+import com.chscorp.cosmeticsstore.presentation.theme.DarkCoral
+import com.chscorp.cosmeticsstore.presentation.theme.DeepPeach
+import com.chscorp.cosmeticsstore.presentation.theme.OldBurgundy
+import com.chscorp.cosmeticsstore.presentation.viewModel.MainViewModel
 
 @Composable
 fun HomeListProductScreenStateful(

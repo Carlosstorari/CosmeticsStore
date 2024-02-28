@@ -1,4 +1,4 @@
-package com.chscorp.cosmeticsstore.presentation.ui.screens
+package com.chscorp.cosmeticsstore.presentation.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +14,7 @@ import com.chscorp.cosmeticsstore.presentation.PresentationConst.categoryUnavail
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.priceUnavailable
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.ratingUnavailable
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.typeUnavailable
-import com.chscorp.cosmeticsstore.presentation.ui.viewModel.MainViewModel
+import com.chscorp.cosmeticsstore.presentation.viewModel.MainViewModel
 
 @Composable
 fun ProductDetailScreen(

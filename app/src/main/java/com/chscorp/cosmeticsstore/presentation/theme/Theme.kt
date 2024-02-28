@@ -1,4 +1,4 @@
-package com.chscorp.cosmeticsstore.presentation.ui.theme
+package com.chscorp.cosmeticsstore.presentation.theme
 
 import android.app.Activity
 import android.os.Build

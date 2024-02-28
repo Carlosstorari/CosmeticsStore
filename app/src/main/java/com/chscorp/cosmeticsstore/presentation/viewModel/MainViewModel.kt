@@ -1,30 +1,27 @@
-package com.chscorp.cosmeticsstore.presentation.ui.viewModel
+package com.chscorp.cosmeticsstore.presentation.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chscorp.cosmeticsstore.domain.product.ProductInfo
 import com.chscorp.cosmeticsstore.domain.product.ProductListItem
+import com.chscorp.cosmeticsstore.domain.repository.DataBaseRepository
 import com.chscorp.cosmeticsstore.domain.repository.ProductsRepository
 import com.chscorp.cosmeticsstore.domain.util.Resource
-import com.chscorp.cosmeticsstore.presentation.state.ProductDetailState
 import com.chscorp.cosmeticsstore.presentation.state.ProductState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class MainViewModel(val repository: ProductsRepository) : ViewModel() {
+class MainViewModel(
+    val repositoryProduct: ProductsRepository,
+    val repositoryDataBase: DataBaseRepository
+    ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ProductState> = MutableStateFlow(
         ProductState()
     )
     val uiState get() = _uiState.asStateFlow()
-
-    private val _uiDetailState: MutableStateFlow<ProductDetailState> = MutableStateFlow(
-        ProductDetailState()
-    )
-    val uiDetailState get() = _uiDetailState.asStateFlow()
-
 
     lateinit var list: List<ProductListItem>
 
@@ -47,13 +44,19 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
                 isLoading = true,
                 error = null
             )
-            when (val result = repository.getProductListItem()) {
+            when (val result = repositoryProduct.getProductListItem()) {
                 is Resource.Success -> {
                     result.data?.let {
                         list = it
-                        _uiState.value = _uiState.value.copy(
-                            favoriteState = listToMap(list)
-                        )
+                        if (repositoryDataBase.getData() != null){
+                            _uiState.value = _uiState.value.copy(
+                                favoriteState = repositoryDataBase.getData() ?: mutableMapOf()
+                            )
+                        } else {
+                            _uiState.value = _uiState.value.copy(
+                                favoriteState = listToMap(list)
+                            )
+                        }
                     }
                     _uiState.value = _uiState.value.copy(
                         productList = result.data,
@@ -76,7 +79,7 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
 
     private fun loadScreenDetail() {
         viewModelScope.launch {
-            when (val result = repository.getProductInfo()) {
+            when (val result = repositoryProduct.getProductInfo()) {
                 is Resource.Success -> {
                     _uiState.value = _uiState.value.copy(
                         productInfoList = result.data
@@ -146,6 +149,9 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
             _uiState.value.copy(
                 favoriteState = favorite
             )
+            viewModelScope.launch {
+                repositoryDataBase.update(_uiState.value.favoriteState)
+            }
         }
     }
 

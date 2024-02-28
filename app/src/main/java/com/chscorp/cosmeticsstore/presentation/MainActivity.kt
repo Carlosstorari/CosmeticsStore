@@ -14,11 +14,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.chscorp.cosmeticsstore.presentation.ui.screens.HomeListProductScreenStateful
-import com.chscorp.cosmeticsstore.presentation.ui.screens.ProductDetailScreen
-import com.chscorp.cosmeticsstore.presentation.ui.theme.CosmeticsStoreTheme
-import com.chscorp.cosmeticsstore.presentation.ui.theme.Pink80
-import com.chscorp.cosmeticsstore.presentation.ui.viewModel.MainViewModel
+import com.chscorp.cosmeticsstore.presentation.screens.HomeListProductScreenStateful
+import com.chscorp.cosmeticsstore.presentation.screens.ProductDetailScreen
+import com.chscorp.cosmeticsstore.presentation.theme.CosmeticsStoreTheme
+import com.chscorp.cosmeticsstore.presentation.theme.Pink80
+import com.chscorp.cosmeticsstore.presentation.viewModel.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
