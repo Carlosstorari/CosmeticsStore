@@ -19,9 +19,14 @@ object PresentationConst {
 
     //card item
     const val brandLabel = "Marca: "
-    const val brandUnavailable = "marca indisponivel"
+    const val brandUnavailable = "marca indisponível"
     const val priceLabel = "Preço: "
-    const val priceUnavailable = "preço indisponivel"
+    const val priceUnavailable = "preço indisponível"
     const val descriptionLabel = "Descrição: "
-    const val descriptionUnavailable = "descrição indisponivel"
+    const val descriptionUnavailable = "descrição indisponível"
+
+    //product info
+    const val ratingUnavailable = "classificação indisponível"
+    const val categoryUnavailable = "categoria indisponível"
+    const val typeUnavailable = "tipo indisponível"
 }

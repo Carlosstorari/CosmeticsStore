@@ -1,6 +1,7 @@
 package com.chscorp.cosmeticsstore.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.chscorp.cosmeticsstore.domain.product.ProductListItem
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.brandLabel
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.brandUnavailable
@@ -42,6 +44,7 @@ import com.chscorp.cosmeticsstore.presentation.ui.theme.WengeGray
 @Composable
 fun CardProductItem(
     product: ProductListItem,
+    navController: NavController,
     modifier: Modifier = Modifier,
     elevation: Dp = 4.dp,
     onFavoriteClicked: (String) -> Unit,
@@ -50,7 +53,10 @@ fun CardProductItem(
     Card(
         modifier
             .fillMaxWidth()
-            .heightIn(100.dp),
+            .heightIn(100.dp)
+            .clickable {
+                navController.navigate(route = "ProductDetail/${product.id}")
+            },
         elevation = CardDefaults.cardElevation(
             defaultElevation = elevation
         )

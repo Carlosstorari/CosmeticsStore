@@ -3,9 +3,11 @@ package com.chscorp.cosmeticsstore.presentation.ui.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chscorp.cosmeticsstore.domain.product.ProductInfo
 import com.chscorp.cosmeticsstore.domain.product.ProductListItem
 import com.chscorp.cosmeticsstore.domain.repository.ProductsRepository
 import com.chscorp.cosmeticsstore.domain.util.Resource
+import com.chscorp.cosmeticsstore.presentation.state.ProductDetailState
 import com.chscorp.cosmeticsstore.presentation.state.ProductState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,10 +19,18 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
         ProductState()
     )
     val uiState get() = _uiState.asStateFlow()
+
+    private val _uiDetailState: MutableStateFlow<ProductDetailState> = MutableStateFlow(
+        ProductDetailState()
+    )
+    val uiDetailState get() = _uiDetailState.asStateFlow()
+
+
     lateinit var list: List<ProductListItem>
 
     init {
         loadProductInfo()
+        loadScreenDetail()
     }
 
     fun listToMap(list: List<ProductListItem>): MutableMap<String, Boolean> {
@@ -37,7 +47,7 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
                 isLoading = true,
                 error = null
             )
-            when (val result = repository.getProductData()) {
+            when (val result = repository.getProductListItem()) {
                 is Resource.Success -> {
                     result.data?.let {
                         list = it
@@ -61,7 +71,26 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
                     )
                 }
             }
+        }
+    }
 
+    private fun loadScreenDetail() {
+        viewModelScope.launch {
+            when (val result = repository.getProductInfo()) {
+                is Resource.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        productInfoList = result.data
+                    )
+                }
+
+                is Resource.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        productList = null,
+                        isLoading = false,
+                        error = result.message
+                    )
+                }
+            }
         }
     }
 
@@ -105,6 +134,11 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
         )
     }
 
+    fun getProductInfo(id: String?): ProductInfo? {
+        return _uiState.value.productInfoList?.find {
+            it.id == id
+        }
+    }
     fun updateItemToFavoteById(id: String) {
         _uiState.value.favoriteState[id]?.let {
             _uiState.value.favoriteState[id] = !it

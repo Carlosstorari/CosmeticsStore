@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.alphabetica
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.biggestPrice
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.favorite
@@ -44,12 +45,13 @@ import com.chscorp.cosmeticsstore.presentation.ui.viewModel.MainViewModel
 
 @Composable
 fun HomeListProductScreenStateful(
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    navController: NavController
 ) {
     val state by viewModel.uiState.collectAsState()
-    //val favoriteStateItem by viewModel.favoriteState.collectAsState()
     HomeListProductScreenStateless(
         state = state,
+        navController = navController,
         filterBarState =
         FilterBarState(
             onOptionSelected = { option -> viewModel.selectedFilterOption(option) },
@@ -70,13 +72,13 @@ fun HomeListProductScreenStateful(
             }
         ),
         { id -> viewModel.updateItemToFavoteById(id) },
-        //favoriteStateItem = favoriteStateItem
     )
 }
 
 @Composable
 fun HomeListProductScreenStateless(
     state: ProductState = ProductState(),
+    navController: NavController,
     filterBarState: FilterBarState,
     onClickItem: (String) -> Unit,
 ) {
@@ -86,7 +88,8 @@ fun HomeListProductScreenStateless(
     if (!isLoading) {
         Column {
             var productList = state.productList
-            Text(text = titleFilter)
+            Spacer(modifier = Modifier.padding(10.dp))
+            Text(text = titleFilter, Modifier.padding(10.dp))
             Spacer(modifier = Modifier)
             Row(
                 Modifier
@@ -158,7 +161,12 @@ fun HomeListProductScreenStateless(
                         item {
                             CardProductItem(
                                 product = product,
-                                onFavoriteClicked = { id-> onClickItem(id) },
+                                navController = navController,
+                                modifier = Modifier,
+//                                    .clickable {
+//                                        navController.navigate(route = "ProductDetail/${product.id}")
+//                                    },
+                                onFavoriteClicked = { id -> onClickItem(id) },
                                 favoriteState = favoriteStateItem
                             )
                         }
