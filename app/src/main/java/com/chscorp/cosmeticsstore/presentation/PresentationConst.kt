@@ -16,4 +16,12 @@ object PresentationConst {
         favorite
     )
     const val titleFilter = "Ordenar por"
+
+    //card item
+    const val brandLabel = "Marca: "
+    const val brandUnavailable = "marca indisponivel"
+    const val priceLabel = "Preço: "
+    const val priceUnavailable = "preço indisponivel"
+    const val descriptionLabel = "Descrição: "
+    const val descriptionUnavailable = "descrição indisponivel"
 }

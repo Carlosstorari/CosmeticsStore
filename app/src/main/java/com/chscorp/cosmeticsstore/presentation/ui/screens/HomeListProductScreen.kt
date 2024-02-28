@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.alphabetica
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.biggestPrice
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.favorite
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.invertedAlphabetica
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.lowestPrice
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.options
@@ -46,6 +47,7 @@ fun HomeListProductScreenStateful(
     viewModel: MainViewModel
 ) {
     val state by viewModel.uiState.collectAsState()
+    //val favoriteStateItem by viewModel.favoriteState.collectAsState()
     HomeListProductScreenStateless(
         state = state,
         filterBarState =
@@ -62,9 +64,13 @@ fun HomeListProductScreenStateful(
             },
             orderByInvertedAlphabetica = {
                 viewModel.orderByInvertedAlphabetica()
+            },
+            orderByFavorites = {
+                viewModel.orderByFavorites()
             }
         ),
-        { id, favorite -> viewModel.updateItemToFavoteById(id, favorite) }
+        { id -> viewModel.updateItemToFavoteById(id) },
+        //favoriteStateItem = favoriteStateItem
     )
 }
 
@@ -72,8 +78,9 @@ fun HomeListProductScreenStateful(
 fun HomeListProductScreenStateless(
     state: ProductState = ProductState(),
     filterBarState: FilterBarState,
-    onClickItem: (String, Boolean) -> Unit,
+    onClickItem: (String) -> Unit,
 ) {
+    var favoriteStateItem = state.favoriteState
     var selectedOption = state.selectedOption
     val isLoading = state.isLoading
     if (!isLoading) {
@@ -137,7 +144,9 @@ fun HomeListProductScreenStateless(
                     filterBarState.orderByInvertedAlphabetica()
                 }
 
-                else -> {}
+                favorite -> {
+                    filterBarState.orderByFavorites()
+                }
             }
             LazyColumn(
                 Modifier
@@ -147,8 +156,11 @@ fun HomeListProductScreenStateless(
                 if (productList != null) {
                     for (product in productList) {
                         item {
-                            CardProductItem(product,
-                                onFavoriteClicked = { id, favorite -> onClickItem(id, favorite) })
+                            CardProductItem(
+                                product = product,
+                                onFavoriteClicked = { id-> onClickItem(id) },
+                                favoriteState = favoriteStateItem
+                            )
                         }
                     }
                 }

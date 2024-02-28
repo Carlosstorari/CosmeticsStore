@@ -5,6 +5,7 @@ data class FilterBarState(
     val orderByLowestPrice: () -> Unit = {},
     val orderByBiggestPrice: () -> Unit = {},
     val orderByAlphabetica: () -> Unit = {},
-    val orderByInvertedAlphabetica: () -> Unit = {}
+    val orderByInvertedAlphabetica: () -> Unit = {},
+    val orderByFavorites: () -> Unit = {}
 
 )

@@ -18,10 +18,6 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -33,6 +29,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.chscorp.cosmeticsstore.domain.product.ProductListItem
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.brandLabel
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.brandUnavailable
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.descriptionLabel
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.descriptionUnavailable
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.priceLabel
+import com.chscorp.cosmeticsstore.presentation.PresentationConst.priceUnavailable
 import com.chscorp.cosmeticsstore.presentation.ui.theme.CosmeticsStoreTheme
 import com.chscorp.cosmeticsstore.presentation.ui.theme.DeepPeach
 import com.chscorp.cosmeticsstore.presentation.ui.theme.WengeGray
@@ -42,7 +44,8 @@ fun CardProductItem(
     product: ProductListItem,
     modifier: Modifier = Modifier,
     elevation: Dp = 4.dp,
-    onFavoriteClicked: (String, Boolean) -> Unit
+    onFavoriteClicked: (String) -> Unit,
+    favoriteState: MutableMap<String, Boolean>
 ) {
     Card(
         modifier
@@ -59,9 +62,9 @@ fun CardProductItem(
                 .padding(16.dp)
         ) {
             Row {
-                Text(text = "Marca: ", fontWeight = FontWeight.Bold)
+                Text(text = brandLabel, fontWeight = FontWeight.Bold)
                 Text(
-                    text = product.brand ?: "marca indisponivel",
+                    text = product.brand ?: brandUnavailable,
                     color = WengeGray
                 )
                 Spacer(
@@ -69,15 +72,17 @@ fun CardProductItem(
                         .weight(1f)
                         .fillMaxHeight())
                 FavoriteButton(
-                    onFavoriteClicked = { isFavorite ->
-                        onFavoriteClicked(product.id, isFavorite)
-                    }
+                    onFavoriteClicked = {
+                        onFavoriteClicked(product.id)
+                    },
+                    favoriteState = favoriteState,
+                    itemId = product.id
                 )
             }
             Row {
-                Text(text = "Preço: ", fontWeight = FontWeight.Bold)
+                Text(text = priceLabel, fontWeight = FontWeight.Bold)
                 Text(
-                    text = product.price ?: "preço indisponivel",
+                    text = product.price ?: priceUnavailable,
                     color = WengeGray
                 )
             }
@@ -85,10 +90,10 @@ fun CardProductItem(
                 Text(
                     buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Descrição: ")
+                            append(descriptionLabel)
                         }
                         withStyle(style = SpanStyle(color = WengeGray)) {
-                            append(product.description ?: "descrição indisponivel")
+                            append(product.description ?: descriptionUnavailable)
                         }
                     }
                 )
@@ -101,31 +106,32 @@ fun CardProductItem(
 fun FavoriteButton(
     modifier: Modifier = Modifier,
     color: Color = Color(0xffE91E63),
-    onFavoriteClicked: (favorite: Boolean) -> Unit
+    onFavoriteClicked: (favorite: Boolean) -> Unit,
+    favoriteState: MutableMap<String, Boolean>,
+    itemId: String
 ) {
-
-    var isFavorite by rememberSaveable { mutableStateOf(false) }
-
-    IconToggleButton(
-        checked = isFavorite,
-        onCheckedChange = {
-            isFavorite = !isFavorite
-            onFavoriteClicked(isFavorite)
+    val isFavorite = favoriteState[itemId]
+    isFavorite?.let{
+        IconToggleButton(
+            checked = isFavorite,
+            onCheckedChange = {
+                onFavoriteClicked(isFavorite)
+            }
+        ) {
+            Icon(
+                tint = color,
+                modifier = modifier.graphicsLayer {
+                    scaleX = 1.3f
+                    scaleY = 1.3f
+                },
+                imageVector = if (isFavorite) {
+                    Icons.Filled.Favorite
+                } else {
+                    Icons.Default.FavoriteBorder
+                },
+                contentDescription = null
+            )
         }
-    ) {
-        Icon(
-            tint = color,
-            modifier = modifier.graphicsLayer {
-                scaleX = 1.3f
-                scaleY = 1.3f
-            },
-            imageVector = if (isFavorite) {
-                Icons.Filled.Favorite
-            } else {
-                Icons.Default.FavoriteBorder
-            },
-            contentDescription = null
-        )
     }
 
 }

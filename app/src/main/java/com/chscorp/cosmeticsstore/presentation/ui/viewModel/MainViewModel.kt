@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.chscorp.cosmeticsstore.domain.product.ProductListItem
 import com.chscorp.cosmeticsstore.domain.repository.ProductsRepository
 import com.chscorp.cosmeticsstore.domain.util.Resource
-import com.chscorp.cosmeticsstore.presentation.state.FilterBarState
 import com.chscorp.cosmeticsstore.presentation.state.ProductState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,26 +17,33 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
         ProductState()
     )
     val uiState get() = _uiState.asStateFlow()
-    private val _filterBarState: MutableStateFlow<FilterBarState> = MutableStateFlow(
-        FilterBarState()
-    )
-
     lateinit var list: List<ProductListItem>
 
     init {
         loadProductInfo()
     }
+
+    fun listToMap(list: List<ProductListItem>): MutableMap<String, Boolean> {
+        val map: MutableMap<String, Boolean> = mutableMapOf()
+        list.forEach { product ->
+            map[product.id] = false
+        }
+        return map
+    }
+
     private fun loadProductInfo() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
                 error = null
             )
-
             when (val result = repository.getProductData()) {
                 is Resource.Success -> {
                     result.data?.let {
                         list = it
+                        _uiState.value = _uiState.value.copy(
+                            favoriteState = listToMap(list)
+                        )
                     }
                     _uiState.value = _uiState.value.copy(
                         productList = result.data,
@@ -83,6 +89,15 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
         )
     }
 
+    fun orderByFavorites() {
+        val idFavorites = _uiState.value.favoriteState
+            .filter { (_, value) -> value }
+            .keys.toList()
+        _uiState.value = _uiState.value.copy(
+            productList = list.filter { it.id in idFavorites }
+        )
+    }
+
 
     fun selectedFilterOption(option: String) {
         _uiState.value = _uiState.value.copy(
@@ -90,9 +105,14 @@ class MainViewModel(val repository: ProductsRepository) : ViewModel() {
         )
     }
 
-    fun updateItemToFavoteById(id: String, isFavorite: Boolean) {
-        _uiState.value.productList?.find { product ->
-            product.id == id
-        }?.isFavorite = isFavorite
+    fun updateItemToFavoteById(id: String) {
+        _uiState.value.favoriteState[id]?.let {
+            _uiState.value.favoriteState[id] = !it
+            val favorite = _uiState.value.favoriteState
+            _uiState.value.copy(
+                favoriteState = favorite
+            )
+        }
     }
+
 }
