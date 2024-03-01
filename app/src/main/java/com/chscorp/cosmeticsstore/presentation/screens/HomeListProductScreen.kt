@@ -91,66 +91,10 @@ fun HomeListProductScreenStateless(
             Spacer(modifier = Modifier.padding(10.dp))
             Text(text = titleFilter, Modifier.padding(10.dp))
             Spacer(modifier = Modifier)
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(70.dp)
-                    .horizontalScroll(rememberScrollState())
-            ) {
-                options.forEach { text ->
-                    Row(
-                        modifier = Modifier
-                            .padding(all = 8.dp)
-                    ) {
-                        Text(
-                            text = text,
-                            style = typography.bodySmall.merge(),
-                            color = OldBurgundy,
-                            modifier = Modifier
-                                .clip(
-                                    shape = RoundedCornerShape(
-                                        size = 12.dp,
-                                    ),
-                                )
-                                .clickable {
-                                    filterBarState.onOptionSelected(text)
-                                }
-                                .background(
-                                    if (text == selectedOption) {
-                                        DarkCoral
-                                    } else {
-                                        DeepPeach
-                                    }
-                                )
-                                .padding(
-                                    vertical = 12.dp,
-                                    horizontal = 16.dp,
-                                ),
-                        )
-                    }
-                }
-            }
-            when (selectedOption) {
-                lowestPrice -> {
-                    filterBarState.orderByLowestPrice()
-                }
-
-                biggestPrice -> {
-                    filterBarState.orderByBiggestPrice()
-                }
-
-                alphabetica -> {
-                    filterBarState.orderByAlphabetica()
-                }
-
-                invertedAlphabetica -> {
-                    filterBarState.orderByInvertedAlphabetica()
-                }
-
-                favorite -> {
-                    filterBarState.orderByFavorites()
-                }
-            }
+            FilterBarState(
+                filterBarState,
+                selectedOption,
+            )
             LazyColumn(
                 Modifier
                     .fillMaxSize(),
@@ -163,9 +107,6 @@ fun HomeListProductScreenStateless(
                                 product = product,
                                 navController = navController,
                                 modifier = Modifier,
-//                                    .clickable {
-//                                        navController.navigate(route = "ProductDetail/${product.id}")
-//                                    },
                                 onFavoriteClicked = { id -> onClickItem(id) },
                                 favoriteState = favoriteStateItem
                             )
@@ -182,6 +123,73 @@ fun HomeListProductScreenStateless(
                     .align(Alignment.Center),
                 color = MaterialTheme.colorScheme.secondary
             )
+        }
+    }
+}
+
+@Composable
+private fun FilterBarState(
+    filterBarState: FilterBarState,
+    selectedOption: String
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(70.dp)
+            .horizontalScroll(rememberScrollState())
+    ) {
+        options.forEach { text ->
+            Row(
+                modifier = Modifier
+                    .padding(all = 8.dp)
+            ) {
+                Text(
+                    text = text,
+                    style = typography.bodySmall.merge(),
+                    color = OldBurgundy,
+                    modifier = Modifier
+                        .clip(
+                            shape = RoundedCornerShape(
+                                size = 12.dp,
+                            ),
+                        )
+                        .clickable {
+                            filterBarState.onOptionSelected(text)
+                        }
+                        .background(
+                            if (text == selectedOption) {
+                                DarkCoral
+                            } else {
+                                DeepPeach
+                            }
+                        )
+                        .padding(
+                            vertical = 12.dp,
+                            horizontal = 16.dp,
+                        ),
+                )
+            }
+        }
+    }
+    when (selectedOption) {
+        lowestPrice -> {
+            filterBarState.orderByLowestPrice()
+        }
+
+        biggestPrice -> {
+            filterBarState.orderByBiggestPrice()
+        }
+
+        alphabetica -> {
+            filterBarState.orderByAlphabetica()
+        }
+
+        invertedAlphabetica -> {
+            filterBarState.orderByInvertedAlphabetica()
+        }
+
+        favorite -> {
+            filterBarState.orderByFavorites()
         }
     }
 }

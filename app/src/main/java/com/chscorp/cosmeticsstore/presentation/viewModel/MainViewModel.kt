@@ -48,9 +48,10 @@ class MainViewModel(
                 is Resource.Success -> {
                     result.data?.let {
                         list = it
-                        if (repositoryDataBase.getData() != null){
+                        val resultDataBase = repositoryDataBase.getData()
+                        if (resultDataBase != null && resultDataBase?.size != 0){
                             _uiState.value = _uiState.value.copy(
-                                favoriteState = repositoryDataBase.getData() ?: mutableMapOf()
+                                favoriteState = repositoryDataBase.getData() ?: listToMap(list)
                             )
                         } else {
                             _uiState.value = _uiState.value.copy(
@@ -63,7 +64,6 @@ class MainViewModel(
                         isLoading = false,
                         error = null
                     )
-                    Log.i("Lista de produtos", result.data.toString())
                 }
 
                 is Resource.Error -> {

@@ -17,7 +17,7 @@ class DataBaseRepositoryImpl(private val context: Context, val mapDao: MapDao):D
 
     override suspend fun getData(): MutableMap<String, Boolean>? {
         return withContext(Dispatchers.IO) {
-            val allValues = mutableMapOf<String, Boolean>()
+            var allValues = mutableMapOf<String, Boolean>()
 
             mapDao.getAllValues()?.forEach { keyValueEntity ->
                 allValues[keyValueEntity.keyId] = keyValueEntity.value
