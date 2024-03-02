@@ -9,6 +9,7 @@ import com.chscorp.cosmeticsstore.domain.repository.DataBaseRepository
 import com.chscorp.cosmeticsstore.domain.repository.ProductsRepository
 import com.chscorp.cosmeticsstore.domain.util.Resource
 import com.chscorp.cosmeticsstore.presentation.state.ProductState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class MainViewModel(
     }
 
     private fun loadProductInfo() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
                 error = null
@@ -78,7 +79,7 @@ class MainViewModel(
     }
 
     private fun loadScreenDetail() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             when (val result = repositoryProduct.getProductInfo()) {
                 is Resource.Success -> {
                     _uiState.value = _uiState.value.copy(
@@ -149,7 +150,7 @@ class MainViewModel(
             _uiState.value.copy(
                 favoriteState = favorite
             )
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 repositoryDataBase.update(_uiState.value.favoriteState)
             }
         }
