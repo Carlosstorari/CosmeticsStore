@@ -1,6 +1,7 @@
 package com.chscorp.cosmeticsstore.presentation.viewModel
 
-import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chscorp.cosmeticsstore.domain.product.ProductInfo
@@ -8,6 +9,7 @@ import com.chscorp.cosmeticsstore.domain.product.ProductListItem
 import com.chscorp.cosmeticsstore.domain.repository.DataBaseRepository
 import com.chscorp.cosmeticsstore.domain.repository.ProductsRepository
 import com.chscorp.cosmeticsstore.domain.util.Resource
+import com.chscorp.cosmeticsstore.presentation.state.FilterBarState
 import com.chscorp.cosmeticsstore.presentation.state.ProductState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +25,11 @@ class MainViewModel(
         ProductState()
     )
     val uiState get() = _uiState.asStateFlow()
+
+    private val _uiFilterBar: MutableStateFlow<FilterBarState> = MutableStateFlow(
+        FilterBarState()
+    )
+    val uiFilterBar get() = _uiFilterBar.asStateFlow()
 
     lateinit var list: List<ProductListItem>
 
@@ -105,8 +112,9 @@ class MainViewModel(
     }
 
     fun orderByBiggestPrice() {
+        val sortedList = list.sortedByDescending { it.price?.toFloat() }
         _uiState.value = _uiState.value.copy(
-            productList = list.sortedByDescending { it.price?.toFloat() }
+            productList = sortedList
         )
     }
 
@@ -133,7 +141,7 @@ class MainViewModel(
 
 
     fun selectedFilterOption(option: String) {
-        _uiState.value = _uiState.value.copy(
+        _uiFilterBar.value = _uiFilterBar.value.copy(
             selectedOption = option,
         )
     }
@@ -143,9 +151,9 @@ class MainViewModel(
             it.id == id
         }
     }
-    fun updateItemToFavoteById(id: String) {
+    fun updateItemToFavoriteById(id: String, newValueFavorite: Boolean) {
         _uiState.value.favoriteState[id]?.let {
-            _uiState.value.favoriteState[id] = !it
+            _uiState.value.favoriteState[id] = newValueFavorite
             val favorite = _uiState.value.favoriteState
             _uiState.value.copy(
                 favoriteState = favorite

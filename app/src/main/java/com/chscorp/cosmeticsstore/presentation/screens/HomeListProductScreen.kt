@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,6 +37,7 @@ import com.chscorp.cosmeticsstore.presentation.PresentationConst.lowestPrice
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.options
 import com.chscorp.cosmeticsstore.presentation.PresentationConst.titleFilter
 import com.chscorp.cosmeticsstore.presentation.components.CardProductItem
+import com.chscorp.cosmeticsstore.presentation.state.FilterBarOption
 import com.chscorp.cosmeticsstore.presentation.state.FilterBarState
 import com.chscorp.cosmeticsstore.presentation.state.ProductState
 import com.chscorp.cosmeticsstore.presentation.theme.DarkCoral
@@ -49,11 +51,13 @@ fun HomeListProductScreenStateful(
     navController: NavController
 ) {
     val state by viewModel.uiState.collectAsState()
+    val stateFilterBar by viewModel.uiFilterBar.collectAsState()
     HomeListProductScreenStateless(
         state = state,
+        filterBarState = stateFilterBar,
         navController = navController,
-        filterBarState =
-        FilterBarState(
+        filterBarOptions =
+        FilterBarOption(
             onOptionSelected = { option -> viewModel.selectedFilterOption(option) },
             orderByLowestPrice = {
                 viewModel.orderByLowestPrice()
@@ -71,28 +75,29 @@ fun HomeListProductScreenStateful(
                 viewModel.orderByFavorites()
             }
         ),
-        { id -> viewModel.updateItemToFavoteById(id) },
+        { id, isFavorite -> viewModel.updateItemToFavoriteById(id, isFavorite) },
     )
 }
 
 @Composable
 fun HomeListProductScreenStateless(
     state: ProductState = ProductState(),
+    filterBarState: FilterBarState = FilterBarState(),
     navController: NavController,
-    filterBarState: FilterBarState,
-    onClickItem: (String) -> Unit,
+    filterBarOptions: FilterBarOption,
+    onClickItem: (String, Boolean) -> Unit,
 ) {
     var favoriteStateItem = state.favoriteState
-    var selectedOption = state.selectedOption
+    var selectedOption = filterBarState.selectedOption
     val isLoading = state.isLoading
+    var productList = state.productList
     if (!isLoading) {
         Column {
-            var productList = state.productList
             Spacer(modifier = Modifier.padding(10.dp))
             Text(text = titleFilter, Modifier.padding(10.dp))
             Spacer(modifier = Modifier)
             FilterBarState(
-                filterBarState,
+                filterBarOptions,
                 selectedOption,
             )
             LazyColumn(
@@ -101,16 +106,19 @@ fun HomeListProductScreenStateless(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 if (productList != null) {
-                    for (product in productList) {
-                        item {
-                            CardProductItem(
-                                product = product,
-                                navController = navController,
-                                modifier = Modifier,
-                                onFavoriteClicked = { id -> onClickItem(id) },
-                                favoriteState = favoriteStateItem
-                            )
-                        }
+                    items(productList, key = {product -> product.id}) { product ->
+                        CardProductItem(
+                            product = product,
+                            navController = navController,
+                            modifier = Modifier,
+                            onFavoriteClicked = { id, isFavorite ->
+                                onClickItem(
+                                    id,
+                                    isFavorite
+                                )
+                            },
+                            favoriteState = favoriteStateItem
+                        )
                     }
                 }
             }
@@ -129,7 +137,7 @@ fun HomeListProductScreenStateless(
 
 @Composable
 private fun FilterBarState(
-    filterBarState: FilterBarState,
+    filterBarState: FilterBarOption,
     selectedOption: String
 ) {
     Row(

@@ -19,6 +19,10 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -47,7 +51,7 @@ fun CardProductItem(
     navController: NavController,
     modifier: Modifier = Modifier,
     elevation: Dp = 4.dp,
-    onFavoriteClicked: (String) -> Unit,
+    onFavoriteClicked: (String, Boolean) -> Unit,
     favoriteState: MutableMap<String, Boolean>
 ) {
     Card(
@@ -78,8 +82,8 @@ fun CardProductItem(
                         .weight(1f)
                         .fillMaxHeight())
                 FavoriteButton(
-                    onFavoriteClicked = {
-                        onFavoriteClicked(product.id)
+                    onFavoriteClicked = { isFavorite ->
+                        onFavoriteClicked(product.id, isFavorite)
                     },
                     favoriteState = favoriteState,
                     itemId = product.id
@@ -116,12 +120,17 @@ fun FavoriteButton(
     favoriteState: MutableMap<String, Boolean>,
     itemId: String
 ) {
-    val isFavorite = favoriteState[itemId]
+    val favoriteStateMap = favoriteState as Map<String, Boolean>
+    val isFavorite = favoriteStateMap[itemId]
     isFavorite?.let{
+        var favorite = rememberSaveable {
+            mutableStateOf(isFavorite)
+        }
         IconToggleButton(
-            checked = isFavorite,
+            checked = favorite.value,
             onCheckedChange = {
-                onFavoriteClicked(isFavorite)
+                favorite.value = !favorite.value
+                onFavoriteClicked(favorite.value)
             }
         ) {
             Icon(
@@ -130,7 +139,7 @@ fun FavoriteButton(
                     scaleX = 1.3f
                     scaleY = 1.3f
                 },
-                imageVector = if (isFavorite) {
+                imageVector = if (favorite.value) {
                     Icons.Filled.Favorite
                 } else {
                     Icons.Default.FavoriteBorder
